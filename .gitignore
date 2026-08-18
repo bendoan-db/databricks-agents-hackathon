@@ -1,0 +1,14 @@
+# Generated artifacts. Everything under output/ is reproducible from input/ via
+# /agent-gen-build-agent, so only the directory placeholders are tracked.
+output/*
+!output/*/
+output/*/*
+!output/*/.gitkeep
+
+# Sparse template clones, refetched by scripts/fetch_templates.py
+.template_cache/
+
+__pycache__/
+*.pyc
+.venv/
+.env
