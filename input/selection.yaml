@@ -1,0 +1,45 @@
+# =============================================================================
+# selection.yaml — template selection record (written by the agent-gen-select-templates skill)
+#
+# The durable handoff between matching and generation. Records which templates
+# feed which output artifact, which files to read, and why — so the generators do
+# not each re-derive the matching and drift from one another.
+#
+# Templates do not map 1:1 to artifacts: financebench-agent is a whole project
+# feeding both, while complex-document-parsing feeds ingestion only. Hence the
+# per-artifact structure below.
+# =============================================================================
+
+generated_at:                    # ISO timestamp
+config_fingerprint:              # sha256 of input/generation_config.yaml; stale if it no longer matches
+
+artifacts:
+
+  document_ingestion_pipeline:
+    primary_template:            # template_name providing the skeleton
+    contributing_templates: []   # template_names providing specific capabilities
+    read_files:
+      - template:                # template_name
+        paths: []                # paths within .template_cache/<template>/
+        take:                    # what to port from these files
+    rationale:                   # which generation_config values drove this
+
+  agent_app:
+    primary_template:
+    contributing_templates: []
+    read_files:
+      - template:
+        paths: []
+        take:
+    rationale:
+
+# Config values with no template behind them. Each entry names the nearest
+# template to adapt. Generated code for these is NOT template-validated and must
+# not be presented as if it were.
+unsupported: []
+  # - config_path:
+  #   value:
+  #   nearest_template:
+  #   note:
+
+notes:

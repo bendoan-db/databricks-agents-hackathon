@@ -1,0 +1,110 @@
+# =============================================================================
+# generation_config.yaml
+#
+# Single source of truth for the agent harness. Populated from the answers in
+# input/Intake.md, then used to generate:
+#   output/document_ingestion_pipeline/  -> Databricks ingestion job (DAB)
+#   output/agent_app/                    -> custom agent app (Agents on Apps)
+#
+# Comment tags:
+#   (Qn)       the Intake.md question this field is derived from
+#   [advisory] not code-generating; seeds prompts, README, and scoping docs
+#   [derived]  filled in by the generator, not by the intake answers
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# project — identity + deployment target
+# -----------------------------------------------------------------------------
+project:
+  name:                        # kebab-case slug; used for app name, job name, DAB target
+  display_name:                # human-readable name shown in the chat UI
+  description:                 # 1-2 sentence summary (Q1 + Q5)
+
+# -----------------------------------------------------------------------------
+# business_context — [advisory] seeds the system prompt, eval guidelines, README
+# -----------------------------------------------------------------------------
+business_context:
+  business_outcome:            # (Q1) outcome being improved
+  current_process:             # (Q1) how this is solved today without ML/AI
+
+# -----------------------------------------------------------------------------
+# ingestion — drives output/document_ingestion_pipeline
+# -----------------------------------------------------------------------------
+unstructured_data:
+  enabled:                     # (Q7) false when the agent is structured-data-only
+  example_provided:            # boolean - based on whether example data is provided in the example_documents dir
+  source:
+    location:                  # UC volume path containing the raw documents
+    sample_documents_path:     # (Q9) local/UC path to the provided samples
+    samples_provided:          # (Q9) bool — gates schema inference + parser validation
+  document_file_type:          # (Q7.1) pdf, docx, xlsx, etc
+  document_description:        # (Q7) description of the documents being ingested
+  document_count:              # (Q7.1.1) how many documents — sizes compute + batching
+  total_pages:                 # (Q7.1.2) total page count
+  avg_pages_per_document:      # (Q7.1.2)
+  source_quality:              # (Q7.1) clean_digital | mixed | scanned_ocr_required
+  known_quality_issues:        # (Q7.1) free text
+  advanced_figures:            # (Q8) boolean field to determine whether advanced document parsing is required
+  advanced_element_types:      # (Q8) figures | charts | images | tables | forms | handwriting
+  advanced_element_notes:      # (Q8) description of the complex elements
+  custom_metadata_extraction:  # (Q8) boolean field to determine whether additional document extraction is required using ai_extract
+  metadata_fields:             # (Q8) schema for ai_extract; also the filterable index columns
+    - name:
+      type:                    # string | number | date | boolean | array
+      description:
+
+
+# -----------------------------------------------------------------------------
+# structured_data — tables the agent queries
+# -----------------------------------------------------------------------------
+structured_data:
+  enabled:                     # (Q10)
+  example_provided: # boolean - based on whether example data is provided in the example_documents dir
+  table_description: 
+  schema:
+    - name:
+      type:                    # string | number | date | boolean | array
+      description:
+
+# -----------------------------------------------------------------------------
+# agent — the app's reasoning core
+# -----------------------------------------------------------------------------
+agent:
+  task_type:                   # (Q5) conversational_chat | workflow_automation | batch_extraction | research_assistant
+  task_description:            # (Q5) verbatim/distilled description of the GenAI task
+  agent_pattern:               # (Q5,Q6) single_agent | multi_agent_supervisor | deterministic_workflow
+  framework:                   # openai_agents_sdk | langgraph | dspy | custom (wrapped in ResponsesAgent)
+  llm_endpoint:                # model serving endpoint name, e.g. databricks-claude-sonnet-4-5
+  use_ai_gateway:              # bool — Unity AI Gateway for permissions + per-app cost attribution
+  system_prompt_guidance:      # free text distilled from Q1, Q2, Q5, Q6
+  workflow_steps:              # (Q6) the current manual process, in order
+    - name:
+      description:
+      automated:               # bool — agent performs this vs. human retains it
+      tools_used:              # references into tools.* below
+  human_in_the_loop:           # (Q2,Q15) bool — tool-confirmation gate before consequential actions
+  memory:
+    enabled:                   # (Q17.1)
+    scope:                     # (Q17.1) none | thread | user
+    state_backend:             # (Q17.1) none | lakebase
+  multimodal:
+    image_inputs:              # (Q17.2)
+    image_outputs:             # (Q17.2)
+  streaming:                   # (Q14,Q16) bool — stream tokens to the UI
+
+
+# -----------------------------------------------------------------------------
+# evaluation — drives evaluate_agent.py + MLflow scorers
+# -----------------------------------------------------------------------------
+evaluation:
+  benchmark_dataset_provided:
+  scorers:                     # (Q13.2) which MLflow scorers to wire up
+    answer_correctness:        # (Q13.2.1) bool
+    document_recall:           # (Q13.2.2) bool
+    retrieval_groundedness:    # bool
+    text2sql_correctness:      # (Q13.2.3) bool
+    safety:                    # bool
+    guidelines:                # list of natural-language guideline strings
+    custom:                    # (Q13.2.4) custom @scorer definitions
+      - name:
+        description:

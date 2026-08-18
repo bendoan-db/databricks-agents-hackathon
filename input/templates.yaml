@@ -1,0 +1,62 @@
+# =============================================================================
+# templates.yaml — pre-validated template catalog
+#
+# Each item is a validated reference project. The harness reads
+# generation_config.yaml, matches it against these descriptions, and pulls the
+# selected template's code as generation context.
+#
+# github_link is cloned with `git clone --depth 1` and read from disk. Point it
+# at a tag or commit rather than a branch (e.g. /tree/v1.2.0) so "pre-validated"
+# stays true as upstream moves.
+# =============================================================================
+
+templates:
+
+  - template_name: financebench-agent
+    github_link: https://github.com/bendoan-db/databricks-financebench-agent # TODO
+    template_description: >
+      Baseline retrieval agent over a document corpus of 10k financial filings. Parses born-digital
+      files from a UC volume, chunks them, builds a Delta Sync vector search
+      index, and serves a single ResponsesAgent with one retriever tool.
+      The default starting point whenever documents are the only data source.
+    key_features:
+      - Direct text extraction for born-digital PDF
+      - Recursive chunking with configurable size and overlap
+      - Delta Sync vector search index
+      - Single-tool ResponsesAgent with streaming chat UI
+      - DAB deployment for both the ingestion job and the app
+
+  - template_name: complex-document-parsing
+    github_link: https://github.com/qian-yu-db/ai-parse-document-adv-analysis-workflows   # TODO
+    template_description: >
+      Ingestion pipeline for documents whose meaning lives in non-text
+      elements. Uses ai_parse_document for layout-aware extraction of figures,
+      charts, tables, and multi-column pages, emitting elements to a side table
+      alongside the parsed text.
+    key_features:
+      - ai_parse_document layout-aware parsing
+      - Figure, chart, table, and form element extraction
+      - OCR path for scanned or image-only sources
+      - Separate elements table joinable to the chunk table
+      - Retry and backoff around throttled parse calls
+
+  - template_name: multi-agent-supervisor-structured-unstructured
+    github_link: https://github.com/bendoan-db/pricing_explainability_agent   # TODO
+    template_description: >
+      Agent with both a document retriever and a structured query tool,
+      choosing between or combining them per question. Use when the answer
+      requires narrative context from documents and figures from tables.
+    key_features:
+      - Vector search and Genie tools side by side
+      - Tool-selection prompting to route or combine sources
+      - Cross-source answer synthesis with citations
+      - Grounding checks against both retrieval paths
+
+  - template_name: unstructured_to_structured_extraction
+    github_link: https://github.com/bendoan-db/hil-doc-extraction  # TODO
+    template_description: >
+      Extraction pipeline that uses ai_extract to parse key elements of a document to a json, which is flattened and written to delta
+    key_features:
+      - Structured JSON output extraction
+      - Document routing based on confidence scores from ai_extract
+      - ai_extract precision mode (prpr)
