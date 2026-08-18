@@ -8,7 +8,34 @@ output/*/*
 # Sparse template clones, refetched by scripts/fetch_templates.py
 .template_cache/
 
+# Agent tooling installed per-machine. The harness skills are version-controlled
+# in skills/ — .claude/skills/ is the local install that makes them invocable,
+# so a fresh clone needs them copied or symlinked across. See README.
+.claude/
+.agents/
+.ai-dev-kit/
+.databricks/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
 .venv/
+venv/
 .env
+*.egg-info/
+
+# Caches
+.cache/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
